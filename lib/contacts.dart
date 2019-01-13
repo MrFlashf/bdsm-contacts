@@ -7,30 +7,29 @@ class Contacts {
     bool isPermitted = await checkPermissions();
 
     if (!isPermitted) {
-      await askForPermission();
-      return true;
+      bool gotPermission = await askForPermission();
+      return gotPermission;
     } else {
-      return true;
+      return isPermitted;
     }
   }
 
   static Future<bool> checkPermissions() async {
     Permission permission = Permission.ReadContacts;
 
-    bool lala = await SimplePermissions.checkPermission(permission);
+    bool permitted = await SimplePermissions.checkPermission(permission);
 
-    return lala;
+    return permitted;
   }
 
 
-  static Future<void> askForPermission() async {
-    SimplePermissions.requestPermission(Permission.ReadContacts);
+  static Future<bool> askForPermission() async {
+    PermissionStatus status = await SimplePermissions.requestPermission(Permission.ReadContacts);
+    return status == PermissionStatus.authorized;
   }
 
   static Future<Iterable<Contact>> getContacts() async {
     Iterable<Contact> contacts = await ContactsService.getContacts();
-
-    print(contacts);
 
     return contacts;
   }
